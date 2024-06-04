@@ -1,10 +1,14 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
+  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Wish } from '../wishes/wish.entity';
+import { Offer } from '../offers/offer.entity';
+import { Wishlist } from '../wishlists/wishlist.entity';
 
 @Entity()
 export class User {
@@ -31,4 +35,13 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Wish, (wish) => wish.owner)
+  wishes: Wish[];
+
+  @OneToMany(() => Offer, (offer) => offer.user)
+  offers: Offer[];
+
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
+  wishlists: Wishlist[];
 }
