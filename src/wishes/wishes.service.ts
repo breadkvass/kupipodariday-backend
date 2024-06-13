@@ -17,6 +17,7 @@ export class WishesService {
       ...createWishDto,
       owner: { id: userId },
     });
+
     return await this.wishesRepository.save(wish);
   }
 
@@ -36,6 +37,7 @@ export class WishesService {
 
   async update(id: number, updateWishDto: UpdateWishDto): Promise<Wish> {
     await this.wishesRepository.update(id, updateWishDto);
+    
     return await this.wishesRepository.findOne({
       where: { id },
       relations: ['owner'],
@@ -48,6 +50,11 @@ export class WishesService {
       relations: ['owner'],
     });
     await this.wishesRepository.delete(id);
+
     return wish;
+  }
+
+  async incrementCopied(id: number): Promise<void> {
+    await this.wishesRepository.increment({ id }, 'copied', 1);
   }
 }
