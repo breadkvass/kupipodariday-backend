@@ -70,13 +70,13 @@ export class WishesController {
   @Delete(':id')
   async remove(@Request() req, @Param('id') id: string) {
     const wish = await this.wishesService.findOne(+id);
-    
+
     if (!wish) {
       throw new NotFoundException('Желание не найдено');
     }
 
     if (wish.owner.id !== req.user.userId) {
-      throw new ForbiddenException('You are not allowed to delete this wish');
+      throw new ForbiddenException('У Вас нет доступа для удаления этого желания');
     }
 
     return this.wishesService.remove(+id);
