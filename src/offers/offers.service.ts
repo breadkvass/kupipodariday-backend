@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Offer } from './offer.entity';
+import { CreateOfferDto } from './dto/create-offer.dto';
+import { UpdateOfferDto } from './dto/update-offer.dto';
 
 @Injectable()
 export class OffersService {
@@ -9,6 +11,21 @@ export class OffersService {
     @InjectRepository(Offer)
     private offersRepository: Repository<Offer>,
   ) {}
+
+  async create(userId: number, createOfferDto: CreateOfferDto): Promise<Offer> {
+    const offer = this.offersRepository.create({
+      ...createOfferDto,
+      user: { id: userId },
+    });
+    return await this.offersRepository.save(offer);
+  }
+
+  async findOne(id: number): Promise<Offer> {
+    return await this.offersRepository.findOne({
+      where: { id },
+      relations: ['user', 'item'],
+    });
+  }
 
   async findAll(
     query?: FindOptionsWhere<Offer> | FindOptionsWhere<Offer>[],
@@ -18,8 +35,9 @@ export class OffersService {
       relations: ['user', 'item'],
     });
   }
-
-  async findOne(id: number): Promise<Offer> {
+  
+  async update(id: number, updateOfferDto: UpdateOfferDto): Promise<Offer> {
+    await this.offersRepository.update(id, updateOfferDto);
     return await this.offersRepository.findOne({
       where: { id },
       relations: ['user', 'item'],
