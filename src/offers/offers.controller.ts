@@ -9,7 +9,8 @@ export class OffersController {
     private readonly offersService: OffersService,
     private readonly wishesService: WishesService
   ) {}
-
+  
+// TODO: добавить @UseGuards
   @Post()
   async create(@Request() req, @Body() createOfferDto: CreateOfferDto) {
     const wish = await this.wishesService.findOne(createOfferDto.itemId);
@@ -54,14 +55,17 @@ export class OffersController {
     return this.offersService.findAll();
   }
 
+// TODO: добавить @UseGuards
   @Delete(':id')
   async remove(@Request() req, @Param('id') id: string) {
     const offer = await this.offersService.findOne(+id);
+
     if (!offer) {
-      throw new NotFoundException('Предлржение не найдено');
+      throw new NotFoundException('Предложение не найдено');
     }
+
     if (offer.user.id !== req.user.userId) {
-      throw new ForbiddenException('У Вас нет доступа к удалению этого предложения');
+      throw new ForbiddenException('У Вас нет доступа для удаления этого предложения');
     }
 
     const wish = await this.wishesService.findOne(offer.item.id);
