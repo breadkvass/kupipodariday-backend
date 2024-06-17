@@ -8,12 +8,14 @@ import {
   Delete,
   Request,
   NotFoundException,
+  UseGuards
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUsersDto } from './dto/find-users.dto';
 import { Like } from 'typeorm';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -29,7 +31,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-// TODO: добавить @UseGuards
+  @UseGuards(JwtAuthGuard)
   @Get('me')
   findUser(@Request() req) {
     return this.usersService.findOne({ id: req.user.userId });
@@ -46,13 +48,13 @@ export class UsersController {
     return user;
   }
 
-  // TODO: добавить @UseGuards
+  @UseGuards(JwtAuthGuard)
   @Patch('me')
   update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(req.user.userId, updateUserDto);
   }
 
-  // TODO: добавить @UseGuards
+  @UseGuards(JwtAuthGuard)
   @Delete('me')
   remove(@Request() req) {
     return this.usersService.remove(req.user.userId);
@@ -73,7 +75,7 @@ export class UsersController {
     return users;
   }
   
-  // TODO: добавить @UseGuards
+  @UseGuards(JwtAuthGuard)
   @Get('me/wishes')
   async findUserWishes(@Request() req) {
     const user = await this.usersService.findOne({ id: req.user.userId });
