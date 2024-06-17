@@ -14,12 +14,13 @@ import {
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('wishes')
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
 
-  // TODO: добавить @UseGuards
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Request() req, @Body() createWishDto: CreateWishDto) {
     return this.wishesService.create(req.user.userId, createWishDto);
@@ -50,7 +51,7 @@ export class WishesController {
     return wish;
   }
 
-  // TODO: добавить @UseGuards
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(@Request() req, @Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
     const wish = await this.wishesService.findOne(+id);
@@ -66,7 +67,7 @@ export class WishesController {
     return this.wishesService.update(+id, updateWishDto);
   }
 
-  // TODO: добавить @UseGuards
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Request() req, @Param('id') id: string) {
     const wish = await this.wishesService.findOne(+id);
@@ -82,7 +83,7 @@ export class WishesController {
     return this.wishesService.remove(+id);
   }
 
-  // TODO: добавить @UseGuards
+  @UseGuards(JwtAuthGuard)
   @Post(':id/copy')
   async copy(@Request() req, @Param('id') id: string) {
     const wish = await this.wishesService.findOne(+id);
