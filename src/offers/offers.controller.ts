@@ -1,7 +1,8 @@
-import { Controller, Get, Param, NotFoundException, Post, Request, Body, BadRequestException, Delete, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Param, NotFoundException, Post, Request, Body, BadRequestException, Delete, ForbiddenException, UseGuards } from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { WishesService } from 'src/wishes/wishes.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('offers')
 export class OffersController {
@@ -10,7 +11,8 @@ export class OffersController {
     private readonly wishesService: WishesService
   ) {}
   
-// TODO: добавить @UseGuards
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Request() req, @Body() createOfferDto: CreateOfferDto) {
     const wish = await this.wishesService.findOne(createOfferDto.itemId);
@@ -55,7 +57,7 @@ export class OffersController {
     return this.offersService.findAll();
   }
 
-// TODO: добавить @UseGuards
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Request() req, @Param('id') id: string) {
     const offer = await this.offersService.findOne(+id);
